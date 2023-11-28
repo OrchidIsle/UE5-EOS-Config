@@ -40,28 +40,28 @@ inputs:
 
 runs:
   using: 'composite'
-    steps:
-      - name: Update DefaultEngine.ini with Sandbox and Deployment IDs
-        run: |
-          $iniPath = "${{ inputs.CONFIG_DIR_PATH }}/DefaultEngine.ini"
-          $sandboxId = "${{ inputs.SANDBOX_ID }}"
-          $deploymentId = "${{ inputs.DEPLOYMENT_ID }}"
-          $buildId = "${{ inputs.BUILD_ID }}"
-          $clientId = "${{ inputs.CLIENT_ID }}"
-          $clientSecret = "${{ inputs.CLIENT_SECRET }}"
-          $dedicatedServerPublicKey = "${{ inputs.SERVER_PUBLIC_KEY }}"
-          $playerDataEncryptionKey = "${{ inputs.PLAYER_DATA_ENCRYPTION_KEY }}"
-          $content = Get-Content $iniPath -Raw
-          $content = $content -replace '(?<=SandboxId=)[^\r\n]*', $sandboxId
-          $content = $content -replace '(?<=DeploymentId=)[^\r\n]*', $deploymentId
-          $content = $content -replace '(?<=ProductVersion=)[^\r\n]*', $buildId
-          $content = $content -replace '(?<=ClientId=)[^\r\n]*', $clientId
-          $content = $content -replace '(?<=ClientSecret=)[^\r\n]*', $clientSecret
-          $content = $content -replace '(?<=DedicatedServerPublicKey=)[^\r\n]*', $dedicatedServerPublicKey
-          $content = $content -replace '(?<=PlayerDataEncryptionKey=)[^\r\n]*', $playerDataEncryptionKey
-          Set-Content $iniPath -Value $content -Force
+  steps:
+    - name: Update DefaultEngine.ini with Sandbox and Deployment IDs
+      run: |
+        $iniPath = "${{ inputs.CONFIG_DIR_PATH }}/DefaultEngine.ini"
+        $sandboxId = "${{ inputs.SANDBOX_ID }}"
+        $deploymentId = "${{ inputs.DEPLOYMENT_ID }}"
+        $buildId = "${{ inputs.BUILD_ID }}"
+        $clientId = "${{ inputs.CLIENT_ID }}"
+        $clientSecret = "${{ inputs.CLIENT_SECRET }}"
+        $dedicatedServerPublicKey = "${{ inputs.SERVER_PUBLIC_KEY }}"
+        $playerDataEncryptionKey = "${{ inputs.PLAYER_DATA_ENCRYPTION_KEY }}"
+        $content = Get-Content $iniPath -Raw
+        $content = $content -replace '(?<=SandboxId=)[^\r\n]*', $sandboxId
+        $content = $content -replace '(?<=DeploymentId=)[^\r\n]*', $deploymentId
+        $content = $content -replace '(?<=ProductVersion=)[^\r\n]*', $buildId
+        $content = $content -replace '(?<=ClientId=)[^\r\n]*', $clientId
+        $content = $content -replace '(?<=ClientSecret=)[^\r\n]*', $clientSecret
+        $content = $content -replace '(?<=DedicatedServerPublicKey=)[^\r\n]*', $dedicatedServerPublicKey
+        $content = $content -replace '(?<=PlayerDataEncryptionKey=)[^\r\n]*', $playerDataEncryptionKey
+        Set-Content $iniPath -Value $content -Force
 
-      - name: Create DedicatedServerEngine.ini using PowerShell
-        if: ${{ inputs.SERVER == 'true' }}
-        run: |
-          Set-Content -Path "${{ inputs.CONFIG_DIR_PATH }}/DedicatedServerEngine.ini" -Value "${{ inputs.DEDICATED_SERVER_INI }}"
+    - name: Create DedicatedServerEngine.ini using PowerShell
+      if: ${{ inputs.SERVER == 'true' }}
+      run: |
+        Set-Content -Path "${{ inputs.CONFIG_DIR_PATH }}/DedicatedServerEngine.ini" -Value "${{ inputs.DEDICATED_SERVER_INI }}"
