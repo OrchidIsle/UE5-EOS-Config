@@ -41,6 +41,7 @@ runs:
   using: 'composite'
   steps:
     - name: Update DefaultEngine.ini with Sandbox and Deployment IDs
+      shell: powershell
       run: |
         $iniPath = "${{ inputs.CONFIG_DIR_PATH }}/DefaultEngine.ini"
         $sandboxId = "${{ inputs.SANDBOX_ID }}"
@@ -60,7 +61,8 @@ runs:
         $content = $content -replace '(?<=PlayerDataEncryptionKey=)[^\r\n]*', $playerDataEncryptionKey
         Set-Content $iniPath -Value $content -Force
 
-    - name: Create DedicatedServerEngine.ini using PowerShell
+    - name: Create DedicatedServerEngine.ini
+      shell: powershell
       if: ${{ inputs.SERVER == 'true' }}
       run: |
         Set-Content -Path "${{ inputs.CONFIG_DIR_PATH }}/DedicatedServerEngine.ini" -Value "${{ inputs.DEDICATED_SERVER_INI }}"
