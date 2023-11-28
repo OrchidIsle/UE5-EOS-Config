@@ -37,7 +37,6 @@ inputs:
     description: 'DedicatedServerEngine.ini Content'
     required: true
     default: ''
-
 runs:
   using: 'composite'
   steps:
