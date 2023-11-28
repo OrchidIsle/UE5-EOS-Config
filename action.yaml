@@ -1,0 +1,67 @@
+name: UE5-EOS-Config
+description: 'Prepares UE5 config files for Epic Online Services'
+author: 'Orchid Isle Games'
+branding:
+  icon: 'anchor'
+  color: 'green'
+inputs:
+  CONFIG_DIR_PATH:
+    description: 'Path to the configuration directory'
+    required: true
+  SANDBOX_ID:
+    description: 'Sandbox ID'
+    required: true
+  DEPLOYMENT_ID:
+    description: 'Deployment ID'
+    required: true
+  BUILD_ID:
+    description: 'Build ID'
+    required: true
+  CLIENT_ID:
+    description: 'Client ID'
+    required: true
+  CLIENT_SECRET:
+    description: 'Client secret'
+    required: true
+  SERVER_PUBLIC_KEY:
+    description: 'Server Public Key'
+    required: true
+  PLAYER_DATA_ENCRYPTION_KEY:
+    description: 'Player Data Encryption Key'
+    required: true
+  SERVER:
+    description: 'Flag to create DedicatedServerEngine.ini'
+    required: false
+    default: 'false'
+  DEDICATED_SERVER_INI:
+    description: 'DedicatedServerEngine.ini Content'
+    required: true
+    default: ''
+
+runs:
+  using: 'composite'
+    steps:
+      - name: Update DefaultEngine.ini with Sandbox and Deployment IDs
+        run: |
+          $iniPath = "${{ inputs.CONFIG_DIR_PATH }}/DefaultEngine.ini"
+          $sandboxId = "${{ inputs.SANDBOX_ID }}"
+          $deploymentId = "${{ inputs.DEPLOYMENT_ID }}"
+          $buildId = "${{ inputs.BUILD_ID }}"
+          $clientId = "${{ inputs.CLIENT_ID }}"
+          $clientSecret = "${{ inputs.CLIENT_SECRET }}"
+          $dedicatedServerPublicKey = "${{ inputs.SERVER_PUBLIC_KEY }}"
+          $playerDataEncryptionKey = "${{ inputs.PLAYER_DATA_ENCRYPTION_KEY }}"
+          $content = Get-Content $iniPath -Raw
+          $content = $content -replace '(?<=SandboxId=)[^\r\n]*', $sandboxId
+          $content = $content -replace '(?<=DeploymentId=)[^\r\n]*', $deploymentId
+          $content = $content -replace '(?<=ProductVersion=)[^\r\n]*', $buildId
+          $content = $content -replace '(?<=ClientId=)[^\r\n]*', $clientId
+          $content = $content -replace '(?<=ClientSecret=)[^\r\n]*', $clientSecret
+          $content = $content -replace '(?<=DedicatedServerPublicKey=)[^\r\n]*', $dedicatedServerPublicKey
+          $content = $content -replace '(?<=PlayerDataEncryptionKey=)[^\r\n]*', $playerDataEncryptionKey
+          Set-Content $iniPath -Value $content -Force
+
+      - name: Create DedicatedServerEngine.ini using PowerShell
+        if: ${{ inputs.SERVER == 'true' }}
+        run: |
+          Set-Content -Path "${{ inputs.CONFIG_DIR_PATH }}/DedicatedServerEngine.ini" -Value "${{ inputs.DEDICATED_SERVER_INI }}"
